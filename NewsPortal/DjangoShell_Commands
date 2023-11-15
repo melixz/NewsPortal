@@ -1,0 +1,54 @@
+>>> from news.models import *
+>>>
+>>> User.objects.create_user('User1')
+>>> User.objects.create_user('User2')
+>>> User.objects.create_user('User3')
+>>> User.objects.create_user('User4')
+>>>
+>>> author_1 = Author.objects.create(name = "author1", users = User.objects.get(id=1))
+>>> author_2 = Author.objects.create(name = "author2", users = User.objects.get(id=2))
+>>>
+>>> sport = Category.objects.create(name = 'Спорт')
+>>> politics = Category.objects.create(name = 'Политика')
+>>> economy = Category.objects.create(name = 'Экономика')
+>>> culture = Category.objects.create(name = 'Культура')
+>>> education = Category.objects.create(name = 'Образование')
+>>>
+>>> news_1 = Post.objects.create(author = Author.objects.get(id=1), title = "Образование")
+>>> article_1 = Post.objects.create(author = Author.objects.get(id=2),type = article, title = "Экономика")
+>>> article_2 = Post.objects.create(author = Author.objects.get(id=2),type = article, title = "Культура")
+>>>
+>>> Cat_post1 = PostCategory.objects.create(post = Post.objects.get(id=1), category = Category.objects.get(pk=1))
+>>> Cat_post2 = PostCategory.objects.create(post = Post.objects.get(id=1), category = Category.objects.get(pk=2))
+>>> Cat_post3 = PostCategory.objects.create(post = Post.objects.get(id=2), category = Category.objects.get(pk=1))
+>>> Cat_post4 = PostCategory.objects.create(post = Post.objects.get(id=2), category = Category.objects.get(pk=3))
+>>> Cat_post5 = PostCategory.objects.create(post = Post.objects.get(id=3), category = Category.objects.get(pk=1))
+>>> Cat_post6 = PostCategory.objects.create(post = Post.objects.get(id=3), category = Category.objects.get(pk=4))
+>>>
+>>> comment_1 = Comment.objects.create(post = Post.objects.get(id=1), user = User.objects.get(id=1), text = 'Познавательно!')
+>>> comment_2 = Comment.objects.create(post = Post.objects.get(id=1), user = User.objects.get(id=2), text = 'Увлекает и не отпускает!')
+>>> comment_3 = Comment.objects.create(post = Post.objects.get(id=2), user = User.objects.get(id=1), text = 'Шок!')
+>>> comment_4 = Comment.objects.create(post = Post.objects.get(id=3), user = User.objects.get(id=2), text = 'Сенсация!')
+>>>
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=2).like()
+>>> Post.objects.get(id=3).like()
+>>> Post.objects.get(id=2).like()
+>>> Post.objects.get(id=2).dislike()
+>>> Post.objects.get(id=2).like()
+>>>
+>>> Comment.objects.get(id=1).like()
+>>> Comment.objects.get(id=2).like()
+>>>
+>>> author_1 = Author.objects.get(pk=1)
+>>> author_1.update_rating()
+>>> author_2 = Author.objects.get(pk=2)
+>>> author_2.update_rating()
+>>>
+>>>Author.objects.all().order_by("-author_rating").values("author", "author_rating").first()
+>>>
+>>>best_post= Post.objects.all().order_by("-post_rating").first()
+>>>Post.objects.all().order_by("-post_rating").values("post_time", "author__author__username", "post_rating", "post_name").first()
+>>>best_post.preview()
+>>>
+>>>Comment.objects.filter(post=best_post).values('comment_time','user__username','comment_rating','comment_text')
