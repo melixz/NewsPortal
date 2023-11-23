@@ -99,12 +99,8 @@ class Post(models.Model):
         return f'{self.title.title()}: {self.text[:20]}'
 
     def get_absolute_url(self):
-        if self.type == article:
-            return reverse('article', args=[str(self.id)])
-        elif self.type == news:
-            return reverse('some_news', args=[str(self.id)])
-        else:
-            return reverse('/', args=[str(self.id)])
+        return reverse('post_detail', args=[str(self.id)])
+
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)  # сначала вызываем метод родителя, чтобы объект сохранился

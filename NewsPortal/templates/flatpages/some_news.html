@@ -1,5 +1,4 @@
 {% extends 'flatpages/default.html' %}
-{% load custom_filters %}
 
 {% block title %}
 Some_news
@@ -7,8 +6,6 @@ Some_news
 
 
 {% block content %}
-<a href="{%url 'post_edit' some_news.pk%}">Редактировать новость</a>
-<a href="{%url 'post_delete' some_news.pk%}">Удалить новость</a> <br>
 
 
 </form>
@@ -25,6 +22,6 @@ Some_news
 
 <hr>
 <h3><em> Содержание: </em></h3>
-<h3><p align="left"> {{ some_news.text|censor }} </p></h3>
+<h3><p align="left"> {{ some_news.text }} </p></h3>
 <hr>
 {% endblock content %}
