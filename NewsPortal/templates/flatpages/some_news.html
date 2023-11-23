@@ -1,0 +1,30 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+Some_news
+{% endblock title %}
+
+
+{% block content %}
+<a href="{%url 'post_edit' some_news.pk%}">Редактировать новость</a>
+<a href="{%url 'post_delete' some_news.pk%}">Удалить новость</a> <br>
+
+
+</form>
+<h1><b> {{ some_news.title}} </b></h1>
+
+<h2> Рейтинг: {{some_news.rating}} </h2>
+
+<h2>{{ some_news.time_in|date:'M d Y' }}</h2>
+<h2>{{ some_news.type }}</h2>
+<h2>{{ some_news.author }}</h2>
+{% for cat in some_news.category.all %}
+<h2>{{ cat }}</a></h2>
+{% endfor %}
+
+<hr>
+<h3><em> Содержание: </em></h3>
+<h3><p align="left"> {{ some_news.text|censor }} </p></h3>
+<hr>
+{% endblock content %}
