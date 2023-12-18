@@ -1,0 +1,28 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+Article
+{% endblock title %}
+
+
+{% block content %}
+<a href="{%url 'article_edit' article.pk%}">Редактировать статью</a>
+<a href="{%url 'article_delete' article.pk%}">Удалить статью</a>
+
+<h1><b> {{ article.title}} </b></h1>
+
+<h2> Рейтинг: {{article.rating}} </h2>
+<h2>{{ article.time_in|date:'M d Y' }}</h2>
+<h2>{{ article.type }}</h2>
+<h2>{{ article.author }}</h2>
+<h2><a href="{% url 'category' article.category %}">{{ article.category }}</a></h2>
+
+
+
+
+<hr>
+<h3><em> Содержание: </em></h3>
+<h3><p align="left"> {{ article.text|censor }} </p></h3>
+<hr>
+{% endblock content %}
