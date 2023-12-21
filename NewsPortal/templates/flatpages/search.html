@@ -1,6 +1,5 @@
 {% extends 'flatpages/default.html' %}
-{% load custom_filters %}
-{% load custom_tags %}
+
 
 {% block title %}
 Search
@@ -12,5 +11,25 @@ Search
        {{ filterset.form.as_p }}
        <input type="submit" value="Найти" />
     </form>
+{% if posts %}
+       <table>
+           <tr>
+               <td>Автор</td>
+               <td>Рейтинг</td>
+               <td>Заголовок</td>
+           </tr>
+
+           {% for post in posts %}
+           <tr>
+               <td>{{ post.author }}</td>
+               <td>{{ post.rating }}</td>
+               <td>{{ post.title }}</td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>Ничего не найдено!</h2>
+   {% endif %}
 
 {% endblock content %}
