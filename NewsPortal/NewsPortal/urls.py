@@ -24,4 +24,7 @@ urlpatterns = [
    # Делаем так, чтобы все адреса из нашего приложения (news/urls.py)
    # подключались к главному приложению с префиксом posts/.
    path('news/', include('news.urls')),
+   path('', include('protect.urls')),
+   path('sign/', include('sign.urls')),
+   path('accounts/', include('allauth.urls')),
 ]

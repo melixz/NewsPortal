@@ -1,6 +1,6 @@
-from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView)
+from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView)
 from django.db.models import Q
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import (PermissionRequiredMixin, LoginRequiredMixin)
 from django.urls import reverse_lazy
 
 from .models import Post
@@ -85,6 +85,7 @@ class ArticleCreate(PermissionRequiredMixin, CreateView):
     template_name = 'articles/new_article.html'
     permission_required = ('NewsPortal.add_post',)
 
+
     def form_valid(self, form):
         response = super().form_valid(form)
         self.success_url = reverse_lazy('new_article', kwargs={'pk': self.object.id})
@@ -105,6 +106,10 @@ class ArticleDelete(DeleteView):
     model = Post
     template_name = 'articles/article_delete.html'
     success_url = reverse_lazy('posts')
+
+
+class ProtectedView(LoginRequiredMixin, TemplateView):
+    template_name = 'prodected_page.html'
 
 
 

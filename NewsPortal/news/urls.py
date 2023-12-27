@@ -1,3 +1,5 @@
+from django.contrib import admin
+from django.urls import include
 from django.urls import path
 from .views import (PostList, PostDetailView, PostCreate, PostUpdate, PostDelete, SearchResultsView, ArticleDelete,
                     ArticleUpdate, ArticleCreate, ArticleDetailView)
@@ -16,4 +18,7 @@ urlpatterns = [
    path('article/create/', ArticleCreate.as_view(), name='new_article'),
    path('article/<int:pk>/edit/', ArticleUpdate.as_view(), name='article_edit'),
    path('article/<int:pk>/delete/', ArticleDelete.as_view(), name='article_delete'),
+   path('admin/', admin.site.urls),
+   path('', include('protect.urls')),
+   path('sign/', include('sign.urls'))
 ]
