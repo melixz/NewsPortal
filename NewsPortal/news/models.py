@@ -3,8 +3,6 @@ from django.core.cache import cache
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import UpdateView
 from django.utils.translation import pgettext_lazy
 
 
@@ -34,7 +32,7 @@ class Author(models.Model):
     def can_create_post(self):
         today = date.today()
         post_count = Post.objects.filter(author=self, created_at__date=today).count()
-        max_posts_per_day = 3
+        max_posts_per_day = 3  # максимальное количество постов в день
         if post_count < max_posts_per_day:
             return True
         else:
@@ -50,7 +48,6 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return reverse('add_category')
-
 
 
 class CategorySubscribe(models.Model):
@@ -72,14 +69,13 @@ class Appointment(models.Model):
 
 
 class Post(models.Model):
-    author = models.ForeignKey(Author, default=1, on_delete=models.SET_DEFAULT, verbose_name=pgettext_lazy('Author', 'Author'))
+    author = models.ForeignKey(User, default=1, on_delete=models.SET_DEFAULT, verbose_name=pgettext_lazy('Author', 'Author'))
     type = models.CharField(max_length=7, choices=TYPE, verbose_name=pgettext_lazy('Type', 'Type'))
     time_in = models.DateTimeField(auto_now_add=True, verbose_name=pgettext_lazy('Time_in', 'Time_in'))
     category = models.ManyToManyField(Category, through='PostCategory', verbose_name=pgettext_lazy('Category', 'Category'))
     title = models.CharField(max_length=255, verbose_name=pgettext_lazy('Title', 'Title'))
     text = models.TextField(verbose_name=pgettext_lazy('Text', 'Text'))
     rating = models.IntegerField(default=0, verbose_name=pgettext_lazy('Rating', 'Rating'))
-
 
     def like(self):
         self.rating += 1
@@ -99,43 +95,18 @@ class Post(models.Model):
         return f'{self.title.title()}: {self.text[:20]}'
 
     def get_absolute_url(self):
-        return reverse('post_detail', args=[str(self.id)])
-
+        if self.type == article:
+            return reverse('article', args=[str(self.id)])
+        elif self.type == news:
+            return reverse('some_news', args=[str(self.id)])
+        else:
+            return reverse('/', args=[str(self.id)])
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)  # сначала вызываем метод родителя, чтобы объект сохранился
         cache.delete(f'post-{self.pk}')  # затем удаляем его из кэша, чтобы сбросить его
 
+
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
-
-class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.TextField()
-    time_in = models.DateTimeField(auto_now_add=True)
-    rating = models.IntegerField(default=0)
-
-    def like(self):
-        self.rating += 1
-        self.save()
-
-    def dislike(self):
-        self.rating -= 1
-        self.save()
-
-
-class ArticleUpdateView(LoginRequiredMixin, UpdateView):
-    model = Post
-    fields = ['title', 'text']
-    template_name_suffix = '_update_form'
-
-    def get_success_url(self):
-        return reverse('post_detail', kwargs={'pk': self.object.pk})
-
-
-class DailyPostLimit(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    limit = models.PositiveIntegerField(default=3)
