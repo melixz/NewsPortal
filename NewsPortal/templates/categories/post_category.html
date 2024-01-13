@@ -1,0 +1,35 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+PostCategory
+{% endblock title %}
+
+
+{% block content %}
+
+<h1> {{ postcategory }}</h1>
+<p><a href="subscribe">Подписаться на новости категории</a></p>
+
+{% if postcategory %}
+        <table>
+            <tr>
+                <td> Заголовок</td>
+                <td> Дата публикации </td>
+                <td> Текст </td>
+                <td> Тип </td>
+            </tr>
+            {% for post in posts %}
+            <tr>
+                <td> {{ post.title }} </td>
+                <td> {{ post.time_in|date:'d M Y' }} </td>
+                <td> {{ post.text|truncatewords:15 }} </td>
+                <td> {{ post.type }} </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h2> Нет новостей! </h2>
+    {% endif %}
+
+
+{% endblock content %}

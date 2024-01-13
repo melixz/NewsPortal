@@ -49,6 +49,10 @@ class Category(models.Model):
     def get_absolute_url(self):
         return reverse('add_category')
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs) # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'product-{self.pk}') # затем удаляем его из кэша, чтобы сбросить его
+
 
 class CategorySubscribe(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT, verbose_name=pgettext_lazy('category', 'category'))

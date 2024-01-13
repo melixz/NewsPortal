@@ -13,7 +13,8 @@ from .models import Post, Appointment, Category, CategorySubscribe
 from .filters import PostFilter
 from .forms import PostForm
 from NewsPortal import settings
-from django.utils.translation import gettext as _ # импортируем функцию для перевода
+from django.utils.translation import gettext as _
+from django.core.cache import cache
 
 
 class PostList(ListView):
@@ -34,6 +35,18 @@ class SearchResultsView(ListView):
     model = Post
     template_name = 'flatpages/search.html'
     context_object_name = 'posts'
+    queryset = Post.objects.all()
+
+    def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта, как ни странно
+        obj = cache.get(f'post-{self.kwargs["pk"]}',
+                        None)  # кэш очень похож на словарь, и метод get действует так же. Он забирает значение по ключу, если его нет, то забирает None.
+
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+
+        return obj
 
     def get_queryset(self):
         # Получаем обычный запрос

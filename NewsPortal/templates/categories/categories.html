@@ -1,0 +1,33 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+
+{% if category_posts %}
+
+    <h1>{{ cats }} </h1>
+
+<p><a href="subscribe">Подписаться</a></p>
+
+    <ul>
+    {% for post in category_posts %}
+
+    <h1><b> {{ post.title}} </b></h1>
+
+    <h2> Рейтинг: {{post.rating}} </h2>
+
+    <h2>{{ post.time_in|date:'M d Y' }}</h2>
+    <h2>{{ post.category }}</h2>
+    <h2>{{ post.author }}</h2>
+
+    <hr>
+    <h3><em> Содержание: </em></h3>
+    <h3><p align="left"> <a href="{% url 'some_news' post.pk %}">{{ post.text }} </p></h3>
+    <hr>
+    {% endfor %}
+    </ul>
+{% else %}
+    <h2> Sorry this page doesn't exist </h2>
+{% endif %}
+
+
+{% endblock content %}

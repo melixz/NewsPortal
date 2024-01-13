@@ -1,0 +1,28 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+Category
+{% endblock title %}
+
+
+{% block content %}
+<h1>Категории </h1>
+{% if category %}
+    <table>
+        {% load cache %}
+        {% cache 60 posts%}
+        <tr>
+            <td> Название категории </td>
+        </tr>
+        {% for cats in category %}
+        <tr>
+            <td> <a href="{% url 'category' cats.id %}">{{ cats.name }} </a> </td>
+        </tr>
+        {% endfor %}
+        {% endcache %}
+    </table>
+{% else %}
+<h2> Категорий нет </h2>
+{% endif %}
+{% endblock content %}

@@ -20,7 +20,7 @@ urlpatterns = [
    path('article/<int:pk>/delete/', ArticleDelete.as_view(), name='article_delete'),
    path('admin/', admin.site.urls),
    path('', include('protect.urls')),
-   path('sign/', include('sign.urls'))
+   path('sign/', include('sign.urls')),
    path('appointments/', include(('appointment.urls', 'appointments'), namespace='appointments')),
    path('accounts/', include('allauth.urls')),
 ]

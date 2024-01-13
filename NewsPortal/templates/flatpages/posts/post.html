@@ -1,12 +1,79 @@
-<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% load custom_tags %}
 
-<!-- Название у нас будет Product -->
 {% block title %}
-Post
+News & Articles
 {% endblock title %}
 
-<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+
 {% block content %}
-<h1>{{ post }}</h1>
+<div class="card">
+        <p class="card-text">Количество созданных постов за всё время: {{user_posts_count}}</p>
+        <p classs="card-text"> Количество созданных постов за 24 часа: {{user_today_posts_count}}</p>
+</div>
+<h1><b> Все новости и статьи </b></h1>
+<a href="/news/create/">Создать новость</a>
+<a href="/article/create/">Создать статью</a>
+<a href="/search/">Найти новость или статью</a>
+
+<h3> {% current_time '%b %d %Y' %}</h3>
+<h3> {{ next_post|default_if_none:"Мы сообщим если будут новости или статьи" }} </h3>
+<h3> {{ posts|length }} новостей и статей:</h3>
+    <form action="" method="get">
+       {{ filterset.form.as_p }}
+       <input type="submit" value="Найти" />
+    </form>
+
+<hr>
+
+
+
+    {% if posts %}
+{% load cache %}
+{% cache 60 posts%}
+        <table>
+            <tr>
+                <td> Заголовок</td>
+                <td> Дата публикации </td>
+                <td> Текст </td>
+                <td> Тип </td>
+            </tr>
+            {% for post in posts %}
+
+            <tr>
+                <td><a href="{% url 'some_news' post.pk %}">{{ post.title }}</a></td>
+                <td> {{ post.time_in|date:'d M Y' }} </td>
+                <td> {{ post.text|truncatewords:15 }} </td>
+                <td> {{ post.type }} </td>
+                <td> {{ post.category }} </td>
+
+            </tr>
+            {% endfor %}
+            {% endcache%}
+        </table>
+
+    {% else %}
+        <h2> Нет новостей! </h2>
+    {% endif %}
+
+{% if page_obj.has_previous %}
+       {# Для каждой ссылки пагинации указываем обработку через новый тег #}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
 {% endblock content %}
