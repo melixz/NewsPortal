@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'sign',
     'protect',
-    'appointment.apps.AppointmentConfig',
     'django_apscheduler'
 ]
 
@@ -187,5 +186,99 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': os.path.join(BASE_DIR, 'cache_files'), # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'style' : '{',
+    'formatters': {
+        'cons_simple': {
+            'format': '%(asctime)s %(levelname)s %(message)s'},
+        'cons_warning':{
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s'},
+        'cons_error':{
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s %(exc_info)s'},
+        'general':{
+            'format': '%(asctime)s %(levelname)s %(module)s %(message)s'},
+        'error':{
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s %(exc_info)s'},
+        'security': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(message)s'},
+        'email': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue'},
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'},
+    },
+    'handlers': {
+        'cons_simple': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'cons_simple'},
+        'cons_warning': {
+            'level': 'WARNING',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'cons_warning'},
+        'cons_error': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'cons_error'},
+        'general':{
+            'level' : 'INFO',
+            'filters': ['require_debug_false'],
+            'class':'logging.FileHandler',
+            'filename': 'general.log',
+            'formatter': 'general'},
+        'error': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'errors.log',
+            'formatter': 'error'},
+        'security':{
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'security.log',
+            'formatter': 'security'},
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'email'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['cons_simple', 'cons_warning', 'cons_error', 'general'],
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['error', 'mail_admins'],
+            'propagate': True,
+        },
+        'django.server':{
+            'handlers': ['error', 'mail_admins'],
+            'propagate': True,
+        },
+        'django.template':{
+            'handlers': ['error'],
+            'propagate': True,
+        },
+        'django.db.backends':{
+            'handlers': ['error'],
+            'propagate': True,
+        },
+        'django.security':{
+            'handlers': ['security'],
+            'propagate': True,
+        }
     }
 }
